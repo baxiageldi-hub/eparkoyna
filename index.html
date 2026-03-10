@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Epark Challenge</title>
+    <style>
+        body { background: #000; color: #ffbf00; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; overflow: hidden; touch-action: manipulation; }
+        
+        /* Rengarenk Neon Yağmuru (Sadece Girişte) */
+        #bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; transition: opacity 0.5s; }
+        .neon-bar { position: absolute; width: 2px; height: 120px; animation: fall linear infinite; opacity: 0.6; }
+        @keyframes fall { to { transform: translateY(110vh); } }
+
+        #game-container { width: 100vw; min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        
+        /* GİRİŞ EKRANI */
+        #start-screen { background: rgba(0, 0, 0, 0.85); border: 2px solid #ffbf00; padding: 40px 20px; box-shadow: 0 0 30px #ffbf0044; z-index: 100; }
+        h1 { font-size: 34px; letter-spacing: 3px; color: #ffbf00; text-shadow: 0 0 15px #ffbf00; margin-bottom: 25px; }
+        .level-text { font-size: 18px; color: #fff; line-height: 1.8; }
+        .highlight { color: #00d4ff; font-weight: 900; font-size: 26px; text-shadow: 0 0 10px #00d4ff; }
+        
+        .pulse-btn { background: #ffbf00; color: #000; border: none; padding: 18px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; font-size: 22px; margin-top: 30px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 191, 0, 0); } 100% { transform: scale(1); } }
+
+        /* OYUN ÖĞELERİ */
+        .target { width: 62px; height: 62px; border-radius: 50%; position: absolute; display: none; box-shadow: 0 0 15px #fff; cursor: pointer; border: 3px solid #fff; z-index: 50; }
+        .blue-ball { background: radial-gradient(circle, #00d4ff 0%, #005f73 100%); }
+        .amber-ball { background: radial-gradient(circle, #ffbf00 0%, #cc9900 100%); }
+        .red-ball { background: radial-gradient(circle, #ff4d4d 0%, #a70000 100%); }
+        .green-ball { background: radial-gradient(circle, #4dff4d 0%, #00a700 100%); }
+        .purple-ball { background: radial-gradient(circle, #d44dff 0%, #6a00a7 100%); }
+        .pink-ball { background: radial-gradient(circle, #ff00ff 0%, #a700a7 100%); }
+        .cyan-ball { background: radial-gradient(circle, #00ffff 0%, #00a7a7 100%); }
+        .gold-ball { background: radial-gradient(circle, #fff700 0%, #ff8c00 100%); box-shadow: 0 0 40px #fff700; animation: blink 0.3s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        .box { border: 2px solid #ffbf00; padding: 25px; border-radius: 20px; width: 85%; background: #111; z-index: 100; }
+        input { width: 90%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ffbf00; background: #000; color: #fff; font-size: 16px; text-align: center; }
+        #stats { position: absolute; top: 20px; width: 100%; display: flex; justify-content: space-around; font-size: 22px; font-weight: bold; z-index: 10; }
+        .hidden { display: none !important; }
+        
+        /* GÜVENLİK KUTUSU */
+        .security-box { font-size: 12px; color: #ccc; background: #222; border-left: 4px solid #ffbf00; padding: 12px; margin: 15px 0; text-align: left; line-height: 1.5; border-radius: 4px; }
+        
+        /* LİDERLİK TABLOSU */
+        #leaderboard { width: 100%; border-collapse: collapse; margin-top: 15px; color: #fff; }
+        #leaderboard td { padding: 8px; border-bottom: 1px solid #222; font-size: 14px; }
+        .my-score-row { background: #ffbf0022; color: #ffbf00 !important; font-weight: bold; border: 1px solid #ffbf00 !important; }
+    </style>
+</head>
+<body>
+
+    <div id="bg-animation"></div>
+
+    <div id="game-container">
+        <div id="start-screen" class="box">
+            <h1>E-PARK CHALLENGE</h1>
+            <div class="level-text">
+                LEVEL 1: 40 Saniye içinde<br>
+                <span class="highlight">750 PUAN</span> barajını geç<br>
+                ve <b>LEVEL 2</b>'ye atla!
+            </div>
+            <button onclick="startGame()" class="pulse-btn">BAŞLAT</button>
+        </div>
+
+        <div id="stats" class="hidden">
+            <div>SÜRE: <span id="timer">40</span></div>
+            <div>SKOR: <span id="score">0</span></div>
+        </div>
+
+        <div id="t1" class="target blue-ball" onclick="hit('t1', 10)"></div>
+        <div id="t2" class="target amber-ball" onclick="hit('t2', 10)"></div>
+        <div id="t3" class="target red-ball" onclick="hit('t3', 10)"></div>
+        <div id="t4" class="target green-ball" onclick="hit('t4', 10)"></div>
+        <div id="t5" class="target purple-ball" onclick="hit('t5', 10)"></div>
+        <div id="t6" class="target pink-ball" onclick="hit('t6', 10)"></div>
+        <div id="t7" class="target cyan-ball" onclick="hit('t7', 10)"></div>
+        <div id="gold" class="target gold-ball" onclick="hit('gold', 100)"></div>
+
+        <div id="finish-screen" class="box hidden">
+            <div id="reg-form">
+                <h2 style="margin:0;">OYUN BİTTİ!</h2>
+                <p>Toplam Skorun: <b id="final-score" style="font-size: 28px; color:#ffbf00;">0</b></p>
+                
+                <div class="security-box">
+                    🛡️ <b>Gizlilik Taahhüdü:</b> Telefon numaranız sadece haftalık ödül kazananına ulaşmak için istenir. Verileriniz <b>Epark</b> bünyesinde gizli tutulur ve asla reklam/tanıtım için paylaşılmaz.
+                </div>
+
+                <input type="tel" id="phone" placeholder="05XX XXX XX XX" maxlength="11">
+                <button id="send-btn" onclick="sendToGoogle()">KAYDET VE SIRALAMAYI GÖR</button>
+                <a href="javascript:void(0)" onclick="skipAndSave()" style="display:block; margin-top:15px; color:#666; text-decoration:none; font-size:13px;">Numara Vermeden Bitir</a>
+            </div>
+
+            <div id="leader-form" class="hidden">
+                <h3 style="color:#ffbf00;">🏆 HAFTALIK LİDERLER</h3>
+                <table id="leaderboard"><tbody id="l-body"></tbody></table>
+                <div id="rank-msg" style="margin-top:15px; font-weight:bold;"></div>
+                <button onclick="location.reload()" style="margin-top:20px; background:#ffbf00; color:#000; font-weight:bold; padding:10px; border-radius:8px; width:100%; border:none; cursor:pointer;">TEKRAR OYNA</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Neon Arka Plan
+    const colors = ['#00d4ff', '#ff00ff', '#00ff00', '#ffbf00', '#ff4d4d'];
+    const bg = document.getElementById('bg-animation');
+    for(let i=0; i<25; i++) {
+        let bar = document.createElement('div');
+        bar.className = 'neon-bar';
+        bar.style.left = Math.random() * 100 + 'vw';
+        bar.style.background = `linear-gradient(to bottom, transparent, ${colors[Math.floor(Math.random() * colors.length)]})`;
+        bar.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        bg.appendChild(bar);
+    }
+
+    let score = 0, timeLeft = 40, currentLevel = 1, gameActive = false, timerInterval;
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyZ0AOvmZgxNEJRBqPCPKhcBEbVaPQY5uLT4vhHHmrmjpYzGWSMhvuwP_obGbh6463h/exec"; 
+    const nick = "Epark-" + Math.floor(Math.random()*900 + 100);
+
+    function startGame() {
+        score = 0; timeLeft = 40; currentLevel = 1; gameActive = true;
+        document.getElementById('bg-animation').style.opacity = '0';
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('stats').classList.remove('hidden');
+        updateBalls();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            if(gameActive && Math.random() < 0.12) spawnGoldBall();
+            
+            // LEVEL GEÇİŞİ
+            if (currentLevel === 1 && score >= 750) {
+                currentLevel = 2;
+                gameActive = false;
+                clearInterval(timerInterval);
+                document.querySelectorAll('.target').forEach(b => b.style.display = 'none');
+                alert("LEVEL 2 BAŞLIYOR! HAZIR OL!");
+                timeLeft = 30;
+                gameActive = true;
+                document.getElementById('timer').innerText = timeLeft;
+                updateBalls();
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timer').innerText = timeLeft;
+                    if(gameActive && Math.random() < 0.15) spawnGoldBall();
+                    updateBalls();
+                    if (timeLeft <= 0) endGame();
+                }, 1000);
+            }
+
+            updateBalls();
+            if (timeLeft <= 0) endGame();
+        }, 1000);
+    }
+
+    function spawnGoldBall() {
+        const g = document.getElementById('gold');
+        if(g.style.display === 'block') return;
+        g.style.display = 'block'; moveBall('gold');
+        setTimeout(() => { g.style.display = 'none'; }, 1300);
+    }
+
+    function updateBalls() {
+        if(!gameActive) return;
+        if (currentLevel === 1) {
+            showBall('t1'); // Level 1 başlangıç
+            if(timeLeft <= 20) showBall('t2'); // Son 20sn 2 top
+            if(timeLeft <= 10) showBall('t3'); // Son 10sn 3 top
+        } else {
+            showBall('t1'); showBall('t2'); // Level 2 başlangıç (2 top)
+            if(timeLeft <= 20) showBall('t3'); // Son 20sn 3 top
+            if(timeLeft <= 10) { showBall('t4'); showBall('t5'); showBall('t6'); showBall('t7'); } // Son 10sn 7 top kaos!
+        }
+    }
+
+    function showBall(id) { const b = document.getElementById(id); if (b.style.display !== 'block') { b.style.display = 'block'; moveBall(id); } }
+    function moveBall(id) { const b = document.getElementById(id); b.style.left = Math.floor(Math.random()*(window.innerWidth-75))+"px"; b.style.top = Math.floor(Math.random()*(window.innerHeight-250)+120)+"px"; }
+    function hit(id, points) { if(!gameActive) return; score += points; document.getElementById('score').innerText = score; if(id === 'gold') document.getElementById('gold').style.display = 'none'; else moveBall(id); }
+
+    function endGame() {
+        gameActive = false; clearInterval(timerInterval);
+        document.querySelectorAll('.target').forEach(b => b.style.display = 'none');
+        document.getElementById('stats').classList.add('hidden');
+        document.getElementById('finish-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = score;
+    }
+
+    function skipAndSave() { document.getElementById('phone').value = "Bırakmadı"; sendToGoogle(); }
+
+    function sendToGoogle() {
+        const p = document.getElementById('phone').value;
+        if(p === "") { alert("Numaranızı girin!"); return; }
+        const btn = document.getElementById('send-btn');
+        btn.disabled = true; btn.innerText = "LİSTE ÇEKİLİYOR...";
+        fetch(GOOGLE_URL, { method: 'POST', body: JSON.stringify({nickname: nick, score: score, phone: p}) })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('reg-form').classList.add('hidden');
+            document.getElementById('leader-form').classList.remove('hidden');
+            const b = document.getElementById('l-body');
+            b.innerHTML = data.top5.map((item, i) => `<tr class="${item.n === nick ? 'my-score-row' : ''}"><td>${i+1}.</td><td>${item.n}</td><td>${item.s}</td></tr>`).join('');
+            const msgDiv = document.getElementById('rank-msg');
+            msgDiv.innerHTML = data.userRank <= 5 ? "✨ TEBRİKLER! İLK 5'TESİNİZ! ✨" : `Toplamda ${data.userRank}. sıradasınız!`;
+            msgDiv.style.color = data.userRank <= 5 ? "lime" : "#ffbf00";
+        })
+        .catch(() => { alert("Kaydedildi!"); location.reload(); });
+    }
+</script>
+</body>
+</html>
