@@ -3,109 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Epark Challenge - Pro</title>
+    <title>Epark Challenge - Pro Final</title>
     <style>
-        body { background: #0b0e14; color: #ffbf00; font-family: 'Segoe UI', Roboto, sans-serif; text-align: center; margin: 0; overflow: hidden; touch-action: manipulation; }
+        body { background: #0b0e14; color: #ffbf00; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; overflow: hidden; touch-action: manipulation; }
         
-        /* MODERN GİRİŞ EKRANI TASARIMI */
+        /* GİRİŞ EKRANI */
         #start-screen { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; max-width: 400px; background: rgba(17, 25, 40, 0.95); 
-            border: 2px solid #ffbf00; border-radius: 25px; padding: 30px;
-            box-shadow: 0 0 40px rgba(255, 191, 0, 0.3); z-index: 1000;
-            backdrop-filter: blur(10px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a1f2c 0%, #0b0e14 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999;
         }
-        h1 { font-size: 32px; margin: 0; color: #ffbf00; text-shadow: 0 0 15px #ffbf00; letter-spacing: 2px; }
+        .content-card {
+            width: 85%; max-width: 400px; background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #ffbf00; border-radius: 25px; padding: 25px;
+            box-shadow: 0 0 30px rgba(255, 191, 0, 0.2); backdrop-filter: blur(10px);
+        }
+        h1 { font-size: 42px; margin: 0; color: #ffbf00; text-shadow: 0 0 20px #ffbf00; letter-spacing: 3px; }
         .sub-title { color: #00d4ff; font-size: 18px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
-        
-        .rules-box { 
-            text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; 
-            font-size: 14px; color: #e0e0e0; line-height: 1.6; border: 1px solid #333;
-        }
-        .rules-box b { color: #ffbf00; }
-        .highlight-blue { color: #00d4ff; font-weight: bold; }
-
-        .start-btn { 
-            background: linear-gradient(45deg, #ffbf00, #ff8c00); color: #000; border: none; 
-            padding: 18px; border-radius: 50px; font-weight: 900; width: 100%; cursor: pointer; 
-            font-size: 20px; margin-top: 25px; box-shadow: 0 10px 20px rgba(255, 191, 0, 0.4);
-            transition: 0.3s; text-transform: uppercase;
-        }
-        .start-btn:active { transform: scale(0.95); }
+        .rules-box { text-align: left; background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; font-size: 14px; color: #e0e0e0; line-height: 1.6; border: 1px solid #333; margin-bottom: 20px; }
+        .start-btn { background: linear-gradient(45deg, #ffbf00, #ff8c00); color: #000; border: none; padding: 20px; border-radius: 50px; font-weight: 900; width: 100%; cursor: pointer; font-size: 22px; box-shadow: 0 10px 20px rgba(255, 191, 0, 0.4); text-transform: uppercase; }
 
         /* OYUN ALANI */
         .target { width: 65px; height: 65px; border-radius: 50%; position: absolute; display: none; cursor: pointer; border: 3px solid #fff; z-index: 50; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
         .gold-ball { background: radial-gradient(circle, #fff700, #ff8c00); box-shadow: 0 0 40px #fff700; animation: blink 0.3s infinite; border-color: #ffd700; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        #stats { position: absolute; top: 0; width: 100%; height: 70px; display: flex; justify-content: space-around; align-items: center; background: rgba(0,0,0,0.8); font-size: 20px; font-weight: bold; border-bottom: 2px solid #ffbf00; z-index: 100; }
+        .level-indicator { position: absolute; top: 75px; width: 100%; color: #00d4ff; font-size: 16px; font-weight: bold; text-transform: uppercase; }
 
-        #stats { position: absolute; top: 0; width: 100%; height: 80px; display: flex; justify-content: space-around; align-items: center; background: rgba(0,0,0,0.5); font-size: 20px; font-weight: bold; border-bottom: 1px solid #333; z-index: 100; }
-        .level-indicator { position: absolute; top: 85px; width: 100%; color: #00d4ff; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* BİTİŞ EKRANI AYNI KALDI */
+        /* BİTİŞ EKRANI */
         .box { border: 2px solid #ffbf00; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; background: #111; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; }
-        input { width: 90%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ffbf00; background: #000; color: #fff; text-align: center; }
+        input { width: 90%; padding: 14px; margin: 15px 0; border-radius: 8px; border: 1px solid #ffbf00; background: #000; color: #fff; text-align: center; font-size: 18px; }
+        .security-box { font-size: 11px; color: #bbb; background: #222; border-left: 4px solid #ffbf00; padding: 10px; margin: 15px 0; text-align: left; line-height: 1.4; border-radius: 4px; }
         #leaderboard { width: 100%; border-collapse: collapse; margin-top: 15px; color: #fff; }
-        #leaderboard td { padding: 8px; border-bottom: 1px solid #222; font-size: 14px; }
-        .my-score-row { background: #ffbf0022; color: #ffbf00 !important; font-weight: bold; border: 1px solid #ffbf00; }
+        #leaderboard td { padding: 8px; border-bottom: 1px solid #222; font-size: 13px; }
+        #leaderboard thead { background: #333; color: #ffbf00; font-size: 12px; font-weight: bold; }
+        .my-score-row { background: rgba(0, 212, 255, 0.2); color: #00d4ff !important; font-weight: bold; border: 1px solid #00d4ff; }
         .hidden { display: none !important; }
+        #rank-msg { color: #00d4ff; font-size: 16px; margin-top: 15px; font-weight: bold; }
+        .skip-btn { background: none; border: 1px solid #444; color: #888; padding: 10px; border-radius: 8px; width: 100%; margin-top: 10px; cursor: pointer; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div id="game-container">
         <div id="start-screen">
-            <h1>E-PARK</h1>
-            <div class="sub-title">Challenge Pro</div>
-            <div class="rules-box">
-                🎯 <b>NASIL OYNANIR?</b><br>
-                • Ekranda çıkan hedefleri vur, puanları topla.<br>
-                • <span class="highlight-blue">Mavi/Renkli = 10 Puan</span><br>
-                • <b>Altın Top = 100 Puan</b> (Hızlı ol!)<br><br>
-                🚀 <b>STRATEJİ:</b><br>
-                • Lvl 1: 40sn / Hedef: <b>750 Puan</b><br>
-                • Lvl 2: 30sn / Hedef: <b>1750 Puan</b><br>
-                • Lvl 3: 10sn / <b>10 TOP KAOSU!</b>
+            <div class="content-card">
+                <h1>E-PARK</h1>
+                <div class="sub-title">Challenge Pro</div>
+                <div class="rules-box">
+                    🎯 <b>NASIL OYNANIR?</b><br>
+                    • Hedeflere dokun, puanları topla.<br>
+                    • <b>Level 1:</b> 1000 Puan Barajı<br>
+                    • <b>Level 2:</b> 2000 Puan Barajı<br>
+                    • <b>Level 3:</b> 10 TOP FİNAL!
+                </div>
+                <button onclick="startGame()" class="start-btn">OYUNU BAŞLAT</button>
             </div>
-            <button onclick="startGame()" class="start-btn">OYUNU BAŞLAT</button>
         </div>
 
         <div id="stats" class="hidden">
             <div>SÜRE: <span id="timer">40</span></div>
-            <div id="score-div">SKOR: <span id="score">0</span></div>
+            <div>SKOR: <span id="score">0</span></div>
         </div>
         <div id="level-tag" class="level-indicator hidden">LEVEL 1</div>
 
-        <div id="t1" class="target" onclick="hit('t1')"></div>
-        <div id="t2" class="target" onclick="hit('t2')"></div>
-        <div id="t3" class="target" onclick="hit('t3')"></div>
-        <div id="t4" class="target" onclick="hit('t4')"></div>
-        <div id="t5" class="target" onclick="hit('t5')"></div>
-        <div id="t6" class="target" onclick="hit('t6')"></div>
-        <div id="t7" class="target" onclick="hit('t7')"></div>
-        <div id="t8" class="target" onclick="hit('t8')"></div>
-        <div id="t9" class="target" onclick="hit('t9')"></div>
-        <div id="t10" class="target" onclick="hit('t10')"></div>
+        <div id="t1" class="target" onclick="hit('t1')"></div><div id="t2" class="target" onclick="hit('t2')"></div>
+        <div id="t3" class="target" onclick="hit('t3')"></div><div id="t4" class="target" onclick="hit('t4')"></div>
+        <div id="t5" class="target" onclick="hit('t5')"></div><div id="t6" class="target" onclick="hit('t6')"></div>
+        <div id="t7" class="target" onclick="hit('t7')"></div><div id="t8" class="target" onclick="hit('t8')"></div>
+        <div id="t9" class="target" onclick="hit('t9')"></div><div id="t10" class="target" onclick="hit('t10')"></div>
         <div id="gold" class="target gold-ball" onclick="hit('gold')"></div>
 
         <div id="finish-screen" class="box hidden">
             <div id="reg-form">
-                <h2>OYUN BİTTİ!</h2>
+                <h2 style="margin:0;">OYUN BİTTİ!</h2>
                 <p>Toplam Skorun: <b id="final-score" style="font-size: 32px; color:#ffbf00;">0</b></p>
+                <div class="security-box">🛡️ <b>Gizlilik:</b> Telefon sadece ödül kazananına ulaşmak içindir. Tabloda sadece rumuzunuz görünür.</div>
                 <input type="tel" id="phone" placeholder="05XX XXX XX XX" maxlength="11">
-                <button id="send-btn" onclick="sendToGoogle()" style="background:#ffbf00; color:#000; border:none; padding:15px; border-radius:8px; font-weight:bold; width:100%;">SIRALAMAYI GÖR</button>
+                <button id="send-btn" onclick="sendToGoogle(true)" style="background:#ffbf00; color:#000; border:none; padding:15px; border-radius:8px; font-weight:bold; width:100%; font-size:16px; cursor:pointer;">KAYDET VE SIRALAMAYI GÖR</button>
+                <button id="skip-btn" onclick="sendToGoogle(false)" class="skip-btn">KAYDETMEDEN SIRALAMAYI GÖR</button>
             </div>
+            
             <div id="leader-form" class="hidden">
-                <h3 style="color:#ffbf00;">🏆 HAFTALIK LİDERLER</h3>
-                <table id="leaderboard"><tbody id="l-body"></tbody></table>
-                <div id="rank-msg" style="margin-top:15px;"></div>
-                <button onclick="location.reload()" style="margin-top:20px; background:#ffbf00; color:#000; padding:10px; border-radius:8px; width:100%; border:none;">TEKRAR OYNA</button>
+                <h3 style="color:#ffbf00; margin-top:0;">🏆 HAFTALIK TOP 10</h3>
+                <table id="leaderboard">
+                    <thead><tr><td>SIRA</td><td>RUMUZ</td><td>PUAN</td></tr></thead>
+                    <tbody id="l-body"></tbody>
+                </table>
+                <div id="rank-msg"></div>
+                <button onclick="location.reload()" style="margin-top:20px; background:#ffbf00; color:#000; padding:12px; border-radius:8px; width:100%; border:none; font-weight:bold; cursor:pointer;">TEKRAR OYNA</button>
             </div>
         </div>
     </div>
 
 <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycby4wToNsXDYqiZ4fj7RYJqMCW5cYjmz3KQNj0jGRLSp-E6nzHRPuXEoiP4G6-Vg-F83/exec"; 
-    const nick = "Epark-" + Math.floor(Math.random()*900 + 100);
+    const URL = "https://script.google.com/macros/s/AKfycbyABj-da3f_7_gcqtuo_CZF0IeoDUq5qRhln3nuj2AL7i3mN7_FCo-zPmkJ4u07OlCU/exec"; 
+    const nick = "E-" + Math.floor(Math.random()*9000 + 1000);
     const colors = ['#00d4ff', '#ff00ff', '#00ff00', '#ffbf00', '#ff4d4d', '#ffffff', '#00ffff'];
     
     let score = 0, timeLeft = 40, currentLevel = 1, gameActive = false, timerInterval;
@@ -115,75 +109,68 @@
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('stats').classList.remove('hidden');
         document.getElementById('level-tag').classList.remove('hidden');
-        
         runTimer();
     }
 
     function runTimer() {
         clearInterval(timerInterval);
         timerInterval = setInterval(() => {
+            if (!gameActive) return;
             timeLeft--;
             document.getElementById('timer').innerText = timeLeft;
-            
-            // Altın Top Şansı
-            if(gameActive && Math.random() < 0.1) spawnGoldBall();
-
+            if(Math.random() < 0.12) spawnGoldBall();
             manageDifficulty();
-
             if (timeLeft <= 0) {
-                if (currentLevel === 1 && score >= 750) nextLevel(2, 30);
-                else if (currentLevel === 2 && score >= 1750) nextLevel(3, 10);
+                if (currentLevel === 1 && score >= 1000) nextLevel(2, 30);
+                else if (currentLevel === 2 && score >= 2000) nextLevel(3, 10);
                 else endGame();
             }
         }, 1000);
     }
 
     function manageDifficulty() {
-        let ballCount = 0;
+        let ballCount = 1;
         if (currentLevel === 1) {
-            ballCount = 1;
             if (timeLeft <= 30) ballCount = 2;
             if (timeLeft <= 20) ballCount = 3;
         } else if (currentLevel === 2) {
             ballCount = 2;
             if (timeLeft <= 20) ballCount = 5;
             if (timeLeft <= 10) ballCount = 7;
-        } else if (currentLevel === 3) {
-            ballCount = 10;
-        }
+        } else { ballCount = 10; }
         
         for(let i=1; i<=10; i++) {
             const b = document.getElementById('t'+i);
             if(i <= ballCount) {
-                if(b.style.display !== 'block') { b.style.display = 'block'; b.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; moveBall('t'+i); }
-            } else {
-                b.style.display = 'none';
-            }
+                if(b.style.display !== 'block') { 
+                    b.style.display = 'block'; 
+                    b.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; 
+                    moveBall('t'+i); 
+                }
+            } else { b.style.display = 'none'; }
         }
     }
 
     function nextLevel(lvl, time) {
-        clearInterval(timerInterval);
-        gameActive = false;
-        alert("LEVEL " + lvl + " BAŞLIYOR! HAZIR OL!");
-        currentLevel = lvl;
-        timeLeft = time;
+        clearInterval(timerInterval); gameActive = false;
+        alert("TEBRİKLER! LEVEL " + lvl + " BAŞLIYOR!");
+        currentLevel = lvl; timeLeft = time;
         document.getElementById('level-tag').innerText = "LEVEL " + lvl;
-        gameActive = true;
-        runTimer();
+        document.getElementById('timer').innerText = timeLeft;
+        gameActive = true; runTimer();
     }
 
     function moveBall(id) {
         const b = document.getElementById(id);
         b.style.left = Math.floor(Math.random()*(window.innerWidth-75))+"px";
-        b.style.top = Math.floor(Math.random()*(window.innerHeight-250)+120)+"px";
+        b.style.top = Math.floor(Math.random()*(window.innerHeight-220)+100)+"px";
     }
 
     function spawnGoldBall() {
         const g = document.getElementById('gold');
         if(g.style.display === 'block') return;
         g.style.display = 'block'; moveBall('gold');
-        setTimeout(() => { g.style.display = 'none'; }, 1000);
+        setTimeout(() => { g.style.display = 'none'; }, 1100);
     }
 
     function hit(id) {
@@ -193,9 +180,7 @@
         if(id !== 'gold') {
             document.getElementById(id).style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
             moveBall(id);
-        } else {
-            document.getElementById('gold').style.display = 'none';
-        }
+        } else { document.getElementById('gold').style.display = 'none'; }
     }
 
     function endGame() {
@@ -207,20 +192,28 @@
         document.getElementById('final-score').innerText = score;
     }
 
-    function sendToGoogle() {
-        const p = document.getElementById('phone').value;
-        if(p === "") { alert("Numaranızı girin!"); return; }
-        const btn = document.getElementById('send-btn');
-        btn.disabled = true; btn.innerText = "YÜKLENİYOR...";
+    function sendToGoogle(shouldSave) {
+        const p = shouldSave ? document.getElementById('phone').value : "0000";
+        if(shouldSave && p.length < 10) { alert("Lütfen numaranızı girin!"); return; }
         
-        fetch(GOOGLE_URL, { method: 'POST', body: JSON.stringify({nickname: nick, score: score, phone: p}) })
+        document.getElementById('reg-form').innerHTML = "<h3>Liderlik Tablosu Yükleniyor...</h3>";
+
+        fetch(URL, { method: 'POST', body: JSON.stringify({nickname: nick, score: score, phone: p}) })
         .then(res => res.json())
         .then(data => {
             document.getElementById('reg-form').classList.add('hidden');
             document.getElementById('leader-form').classList.remove('hidden');
-            document.getElementById('l-body').innerHTML = data.top5.map((item, i) => `<tr class="${item.n === nick ? 'my-score-row' : ''}"><td>${i+1}.</td><td>${item.n}</td><td>${item.s}</td></tr>`).join('');
-            document.getElementById('rank-msg').innerText = "Sıralamanız: " + data.userRank;
-        }).catch(() => { alert("Skor Kaydedildi!"); location.reload(); });
+            
+            document.getElementById('l-body').innerHTML = data.top10.map((item, i) => `
+                <tr class="${item.n === nick ? 'my-score-row' : ''}">
+                    <td>${i+1}</td><td>${item.n}</td><td>${item.s}</td>
+                </tr>`).join('');
+            
+            document.getElementById('rank-msg').innerText = "Siz toplamda " + data.userRank + ". sıradasınız!";
+        }).catch(() => { 
+            alert("Sıralama şu an alınamadı, ancak skorunuz kaydedildi."); 
+            location.reload(); 
+        });
     }
 </script>
 </body>
